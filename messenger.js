@@ -47,8 +47,24 @@ class MessengerClient {
    * Return Type: certificate object/dictionary
    */
   async generateCertificate (username) {
-    throw ('not implemented!')
-    const certificate = {}
+    // Tạo cặp khóa ElGamal (EG) cho client này [cite: 71]
+   const egKeyPair = await generateEG()
+
+    // Lưu trữ toàn bộ cặp khóa (cả public và private) vào đối tượng client
+    // Khóa bí mật (egKeyPair.sec) sẽ cần thiết cho việc tính toán computeDH sau này
+    this.EGKeyPair = egKeyPair
+    this.username = username
+
+    // Tạo đối tượng chứng chỉ
+    const certificate = {
+    username: username, // Chứng chỉ phải chứa username [cite: 72]
+    publicKey: egKeyPair.pub //... và khóa công khai ElGamal [cite: 71, 37]
+    }
+
+    // Lưu lại chứng chỉ của chính mình
+    this.certificate = certificate
+
+    // Trả về đối tượng chứng chỉ để gửi cho Certificate Authority (CA)
     return certificate
   }
 
